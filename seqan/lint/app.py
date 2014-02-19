@@ -85,8 +85,13 @@ class LintConf(object):
         result = []
         with open(path, 'rb') as f:
             fcontents = f.read()
-            for checker in self.checkers:
-                result += checker.run(path, fcontents)
+            result += self.runWithContents(path, fcontents)
+        return result
+
+    def runWithContents(self, path, fcontents):
+        result = []
+        for checker in self.checkers:
+            result += checker.run(path, fcontents)
         return result
 
 
