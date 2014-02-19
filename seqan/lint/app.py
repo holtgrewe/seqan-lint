@@ -46,21 +46,6 @@ class FileEndsWithNewline(Checker):
         self.name = 'trailing_whitespace'
 
     def run(self, fname, fcontents):
-        if fcontents and not fcontents[-1] == '\n':
-            lines = fcontents.splitlines(False)
-            line = len(lines)
-            col = len(lines[-1])
-            return [Issue(SourceLocation(fname, line, col),
-                          'File does not end with newline.')]
-        return []
-            
-
-
-class TrailingWhitespace(Checker):
-    def __init__(self):
-        self.name = 'file_ends_with_newline'
-
-    def run(self, fname, fcontents):
         result = []
         for lineno, line in enumerate(fcontents.splitlines(False)):
             if line and line[-1].isspace():
@@ -68,6 +53,21 @@ class TrailingWhitespace(Checker):
                 result.append(Issue(SourceLocation(fname, lineno + 1, col),
                               'Trailing whitespace in this line.'))
         return result                
+
+
+class TrailingWhitespace(Checker):
+    def __init__(self):
+        self.name = 'file_ends_with_newline'
+
+    def run(self, fname, fcontents):
+        if fcontents and not fcontents[-1] == '\n':
+            lines = fcontents.splitlines(False)
+            line = len(lines)
+            col = len(lines[-1])
+            return [Issue(SourceLocation(fname, line, col),
+                          'File does not end with newline.')]
+        return []
+
 
 CHECKERS = [FileEndsWithNewline(), TrailingWhitespace()]
 
@@ -89,6 +89,8 @@ class LintConf(object):
         return result
 
     def runWithContents(self, path, fcontents):
+        if not any(fnmatch.fnmatch(os.path.basename(path), pat) for pat in self.patterns):
+            return []
         result = []
         for checker in self.checkers:
             result += checker.run(path, fcontents)

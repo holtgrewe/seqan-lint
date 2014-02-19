@@ -41,7 +41,7 @@ def getNewLines(unified_diff):
     from_offset, from_count, to_offset, to_count = 0, 0, 0, 0
     relno = 0  # relative line no
     for line in unified_diff.splitlines(False):
-        if line.startswith('@@') and line.endswith('@@'):
+        if line.startswith('@@'):
             from_, to_ = line.split()[1:3]
             assert from_.startswith('-')
             assert to_.startswith('+')
@@ -73,7 +73,7 @@ def run(repo_name, pull_request, token=None):
         print '    raw:      %s' % f.raw_url
         print '    blob:     %s' % f.blob_url
         #print '    contents: %s' % f.contents_url
-        #print '    patch:    %s' % f.patch
+        #print '    patch:    >>>\n%s\n<<<' % f.patch
         print '    new lines: %s' % getNewLines(f.patch)
         newLines = set(getNewLines(f.patch))
         if not newLines:
